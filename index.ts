@@ -27,12 +27,12 @@ import chalk from 'chalk'
   let targetDir = argv._[0]
   try {
     // Prompts:
-    // - Project name
+    // - Component name
     // - Namespace (aka package name)
-    // - Project language: JavaScript / TypeScript
     // - Add Vitest for testing?
     // - Add ESLint for code quality?
     // - Add Prettier for code formatting?
+    // - TODO, select required permissions
     result = await prompts(
       [
         {
