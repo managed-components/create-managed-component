@@ -88,6 +88,7 @@ import chalk from 'chalk'
   }
 
   console.log(chalk.green(JSON.stringify(result, null, 2)))
+  // TODO - copy template files into target directory, replacing names as needed
 })()
 
 export {}
