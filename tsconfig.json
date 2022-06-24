@@ -1,11 +1,14 @@
 {
-  "extends": "./tsconfig.json",
   "compilerOptions": {
     "module": "ESNext",
-    "target": "ESNext",
+    "target": "ESnext",
+    "module": "CommonJS",
     "moduleResolution": "Node",
     "strict": true,
     "lib": [],
-    "types": ["node"]
-  }
+    "types": ["node"],
+    "allowSyntheticDefaultImports": true,
+    "esModuleInterop": true
+  },
+  "exclude": ["./template/**/*"]
 }
