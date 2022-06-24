@@ -1,6 +1,7 @@
+import chalk from 'chalk'
+import fs from 'fs'
 import minimist from 'minimist'
 import prompts from 'prompts'
-import chalk from 'chalk'
 ;(async function () {
   const isValidPackageName = (projectName: string) =>
     /^(?:@[a-z0-9-*~][a-z0-9-*._~]*\/)?[a-z0-9-~][a-z0-9-._~]*$/.test(
@@ -16,8 +17,8 @@ import chalk from 'chalk'
       .replace(/[^a-z0-9-~]+/g, '-')
 
   let result: {
-    projectName?: string
-    packageName?: string
+    displayName?: string
+    namespace?: string
     needsVitest?: boolean
     needsEslint?: boolean
     needsPrettier?: boolean
@@ -32,7 +33,9 @@ import chalk from 'chalk'
     // - Add Vitest for testing?
     // - Add ESLint for code quality?
     // - Add Prettier for code formatting?
-    // - TODO, select required permissions
+    // - TODO, select required permissions?
+    // - TODO, set manifest description
+    // - TODO, set manifest categories
     result = await prompts(
       [
         {
@@ -87,8 +90,48 @@ import chalk from 'chalk'
     process.exit(1)
   }
 
-  console.log(chalk.green(JSON.stringify(result, null, 2)))
-  // TODO - copy template files into target directory, replacing names as needed
+  console.log(
+    'creating new Managed Component project with parameters:',
+    chalk.green(JSON.stringify(result, null, 2))
+  )
+
+  const templateDir = './template'
+  const files = fs.readdirSync(templateDir)
+  if (!fs.existsSync(result.namespace as string)) {
+    fs.mkdirSync(result.namespace as string)
+  }
+  for (const file of files) {
+    const src = `${templateDir}/${file}`
+    const dest = `${result.namespace}/${file}`
+    if (fs.lstatSync(src).isDirectory()) {
+      if (file === 'src') {
+        fs.mkdirSync(dest)
+        const srcFiles = fs.readdirSync(src)
+        for (const file of srcFiles) {
+          const srcFile = `${src}/${file}`
+          const destFile = `${dest}/${file}`
+          fs.copyFileSync(srcFile, destFile)
+        }
+      }
+      continue
+    } else {
+      const data = fs.readFileSync(src, 'utf8')
+      const replaced = data.replace(
+        /{{ displayName }}/g,
+        result.displayName as string
+      )
+      const replaced2 = replaced.replace(
+        /{{ namespace }}/g,
+        result.namespace as string
+      )
+      const replaced3 = replaced2.replace(
+        /\[ \] find & replace /g,
+        '[x] find & replace '
+      )
+      await fs.writeFileSync(dest, replaced3)
+    }
+  }
+  console.log(chalk.green('✔') + ' Project created')
 })()
 
 export {}
