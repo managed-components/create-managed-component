@@ -4,7 +4,7 @@
   "description": "An easy way to create a Managed Component",
   "main": "index.ts",
   "bin": {
-    "create-mc": "index.js"
+    "create-mc": "dist/index.js"
   },
   "scripts": {
     "test": "tsc --noEmit",
