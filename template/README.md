@@ -1,15 +1,5 @@
 # {{ displayName }} Managed Component
 
-New Component Instance TODOs
-
-- [ ] find & replace "{{ displayName }}" string instances with the display name of your new component
-- [ ] find & replace "{{ namespace }}" string instances with the kebab-case namespace of your new component
-- [ ] add any assets (e.g. a logo?) for your new component under an `assets` folder at the root level
-- [ ] update the component description & categories in [`manifest.json`](src/manifest.json)
-- [ ] populate [`manifest.json`](src/manifest.json) with all required permissions
-- [ ] populate Fields Description section and Tool Settings with all the information a Component Manager would need to run the component. See [Known Managed Components](https://managedcomponents.dev/components) for inspiration
-- [ ] remove this TODO list
-
 ## Documentation
 
 Managed Components docs are published at **https://managedcomponents.dev** .

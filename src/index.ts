@@ -1,7 +1,7 @@
 import chalk from 'chalk'
-import fs from 'fs'
 import minimist from 'minimist'
 import prompts from 'prompts'
+import renderTemplate from './renderTemplate'
 ;(async function () {
   const isValidPackageName = (projectName: string) =>
     /^(?:@[a-z0-9-*~][a-z0-9-*._~]*\/)?[a-z0-9-~][a-z0-9-._~]*$/.test(
@@ -16,27 +16,108 @@ import prompts from 'prompts'
       .replace(/^[._]/, '')
       .replace(/[^a-z0-9-~]+/g, '-')
 
-  let result: {
-    displayName?: string
-    namespace?: string
-    needsVitest?: boolean
-    needsEslint?: boolean
-    needsPrettier?: boolean
-  } = {}
+  interface InitConfig {
+    displayName: string
+    namespace: string
+    description: string
+    icon: string
+    permissions: string[]
+  }
+
+  let initConfig: Partial<InitConfig> = {}
+
+  let permissionDetails: Record<string, string> = {}
+  let confirmed: { value?: boolean } = {}
+  let cleanParams: any = {}
 
   const argv = minimist(process.argv.slice(2), {})
   let targetDir = argv._[0]
+
+  const permissionChoices = [
+    {
+      title: 'Access Client KV',
+      value: 'access_client_kv',
+      description: 'required for:	client.get, client.set',
+    },
+    {
+      title: 'Access Extended Client KV',
+      value: 'access_extended_client_kv',
+      description:
+        'required for:	client.get when getting a key from another tool',
+    },
+    {
+      title: 'Execute Unsafe Scripts',
+      value: 'execute_unsafe_scripts',
+      description: 'required for:	client.execute',
+    },
+    {
+      title: 'Client Network Requests',
+      value: 'client_network_requests',
+      description: 'required for:	client.fetch',
+    },
+    {
+      title: 'Serve Static Files',
+      value: 'serve_static_files',
+      description: 'required for:	serve',
+    },
+    {
+      title: 'Provide Server Functionality',
+      value: 'provide_server_functionality',
+      description: 'required for:	proxy, route',
+    },
+    {
+      title: 'Provide Widget',
+      value: 'provide_widget',
+      description: 'required for:	provideWidget',
+    },
+  ]
+
+  const getPermissionPrompts = (selected: string[]) => {
+    return permissionChoices
+      .filter(({ value }) => selected.includes(value))
+      .flatMap(({ title, value }, index) => {
+        return [
+          {
+            type: 'text',
+            name: `${value}_description`,
+            message: `Permission #${index + 1} of ${
+              selected.length
+            } (${title}) description:`,
+            initial:
+              'This permission is used to facilitate better a user experience.',
+          },
+          {
+            type: 'toggle',
+            name: `${value}_required`,
+            message: `Permission #${index + 1} of ${
+              selected.length
+            } (${title}) required?`,
+            active: 'true',
+            inactive: 'false',
+            initial: true,
+          },
+        ]
+      })
+  }
+
+  const getCleanParams = (
+    initConfig: InitConfig,
+    permissionDetails: Record<string, string>
+  ) => {
+    const permissions: any = {}
+    if (initConfig.permissions) {
+      initConfig.permissions.forEach((perm) => {
+        permissions[perm] = {
+          description: permissionDetails[`${perm}_description`],
+          required: permissionDetails[`${perm}_required`],
+        }
+      })
+    }
+    return { ...initConfig, permissions }
+  }
+
   try {
-    // Prompts:
-    // - Component name
-    // - Namespace (aka package name)
-    // - Add Vitest for testing?
-    // - Add ESLint for code quality?
-    // - Add Prettier for code formatting?
-    // - TODO, select required permissions?
-    // - TODO, set manifest description
-    // - TODO, set manifest categories
-    result = await prompts(
+    initConfig = await prompts(
       [
         {
           name: 'displayName',
@@ -55,28 +136,23 @@ import prompts from 'prompts'
             isValidPackageName(dir) || 'Invalid package.json name',
         },
         {
-          name: 'needsVitest',
-          type: 'toggle',
-          message: 'Add Vitest for Unit Testing?',
-          initial: true,
-          active: 'Yes',
-          inactive: 'No',
+          name: 'description',
+          type: 'text',
+          message: 'Description:',
+          initial: 'A Managed Component for making the internet better',
         },
         {
-          name: 'needsEslint',
-          type: 'toggle',
-          message: 'Add ESLint for code quality?',
-          initial: true,
-          active: 'Yes',
-          inactive: 'No',
+          name: 'icon',
+          type: 'text',
+          message: 'Path to svg icon:',
+          initial: 'assets/icon.svg',
         },
         {
-          name: 'needsPrettier',
-          type: 'toggle',
-          message: 'Add Prettier for code formatting?',
-          initial: true,
-          active: 'Yes',
-          inactive: 'No',
+          name: 'permissions',
+          type: 'multiselect',
+          message: 'Requested Permissions:',
+          instructions: false,
+          choices: permissionChoices,
         },
       ],
       {
@@ -85,54 +161,36 @@ import prompts from 'prompts'
         },
       }
     )
+    if (initConfig.permissions) {
+      permissionDetails = await prompts(
+        getPermissionPrompts(initConfig.permissions) as any,
+        {
+          onCancel: () => {
+            throw new Error(chalk.red('✖') + ' Operation cancelled')
+          },
+        }
+      )
+    }
+    cleanParams = getCleanParams(
+      initConfig as Required<InitConfig>,
+      permissionDetails
+    )
+    confirmed = await prompts({
+      type: 'confirm',
+      name: 'value',
+      message: `Confirm new managed component?: ${chalk.yellow(
+        JSON.stringify(cleanParams, null, 2)
+      )}`,
+      initial: false,
+    })
   } catch (cancelled: any) {
     console.log(cancelled.message)
     process.exit(1)
   }
-
-  console.log(
-    'creating new Managed Component project with parameters:',
-    chalk.green(JSON.stringify(result, null, 2))
-  )
-
-  // Copy template files
-  const templateDir = './template'
-  const files = fs.readdirSync(templateDir)
-  if (!fs.existsSync(result.namespace as string)) {
-    fs.mkdirSync(result.namespace as string)
+  if (confirmed.value) {
+    renderTemplate(cleanParams)
+    console.log(chalk.green('✔') + ' Project created')
   }
-  for (const file of files) {
-    const src = `${templateDir}/${file}`
-    const dest = `${result.namespace}/${file}`
-    if (fs.lstatSync(src).isDirectory()) {
-      if (file === 'src') {
-        fs.mkdirSync(dest)
-        const srcFiles = fs.readdirSync(src)
-        for (const file of srcFiles) {
-          const srcFile = `${src}/${file}`
-          const destFile = `${dest}/${file}`
-          fs.copyFileSync(srcFile, destFile)
-        }
-      }
-      continue
-    } else {
-      const data = fs.readFileSync(src, 'utf8')
-      const replaced = data.replace(
-        /{{ displayName }}/g,
-        result.displayName as string
-      )
-      const replaced2 = replaced.replace(
-        /{{ namespace }}/g,
-        result.namespace as string
-      )
-      const replaced3 = replaced2.replace(
-        /\[ \] find & replace /g,
-        '[x] find & replace '
-      )
-      await fs.writeFileSync(dest, replaced3)
-    }
-  }
-  console.log(chalk.green('✔') + ' Project created')
 })()
 
 export {}
