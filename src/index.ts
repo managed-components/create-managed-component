@@ -95,6 +95,7 @@ import prompts from 'prompts'
     chalk.green(JSON.stringify(result, null, 2))
   )
 
+  // Copy template files
   const templateDir = './template'
   const files = fs.readdirSync(templateDir)
   if (!fs.existsSync(result.namespace as string)) {

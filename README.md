@@ -1,9 +1,9 @@
-# create-mc
+# create-managed-component
 
 An easy way to create a Managed Component
 
 ## Usage
 
 ```sh
-npm init mc
+npm init managed-component
 ```
