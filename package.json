@@ -1,5 +1,5 @@
 {
-  "name": "create-mc",
+  "name": "create-managed-component",
   "version": "1.0.0",
   "description": "An easy way to create a Managed Component",
   "main": "index.ts",
