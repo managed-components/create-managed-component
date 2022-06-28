@@ -23,7 +23,7 @@ interface Config {
   }
 }
 
-export default async (config: Config) => {
+export default (config: Config) => {
   const { displayName, namespace, description, icon, permissions } = config
   const templateDir = path.resolve(__dirname, '../template')
   const files = fs.readdirSync(templateDir)
@@ -66,7 +66,7 @@ export default async (config: Config) => {
         /{{ description }}/g,
         description as string
       )
-      await fs.writeFileSync(dest, replaced3)
+      fs.writeFileSync(dest, replaced3)
     }
   }
 }
