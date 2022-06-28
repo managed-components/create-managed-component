@@ -61,7 +61,11 @@ export default async (config: Config) => {
         /{{ namespace }}/g,
         namespace as string
       )
-      await fs.writeFileSync(dest, replaced2)
+      const replaced3 = replaced2.replace(
+        /{{ description }}/g,
+        description as string
+      )
+      await fs.writeFileSync(dest, replaced3)
     }
   }
 }
