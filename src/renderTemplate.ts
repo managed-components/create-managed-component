@@ -29,6 +29,17 @@ export default async (config: Config) => {
   if (!fs.existsSync(namespace as string)) {
     fs.mkdirSync(namespace as string)
   }
+  const manifest = {
+    name: displayName,
+    namespace,
+    description,
+    icon,
+    permissions,
+  }
+  fs.writeFileSync(
+    `${namespace}/manifest.json`,
+    JSON.stringify(manifest, null, 2)
+  )
   for (const file of files) {
     const src = `${templateDir}/${file}`
     const dest = `${namespace}/${file}`
@@ -45,7 +56,6 @@ export default async (config: Config) => {
       continue
     } else {
       // TODO - write description, icon and permissions of manifest.json
-
       const data = fs.readFileSync(src, 'utf8')
       const replaced = data.replace(/{{ displayName }}/g, displayName as string)
       const replaced2 = replaced.replace(
