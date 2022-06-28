@@ -1,3 +1,4 @@
+import path from 'path'
 import fs from 'fs'
 
 type Permission =
@@ -24,7 +25,7 @@ interface Config {
 
 export default async (config: Config) => {
   const { displayName, namespace, description, icon, permissions } = config
-  const templateDir = './template'
+  const templateDir = path.resolve(__dirname, '../template')
   const files = fs.readdirSync(templateDir)
   if (!fs.existsSync(namespace as string)) {
     fs.mkdirSync(namespace as string)
