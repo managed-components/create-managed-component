@@ -189,7 +189,16 @@ import renderTemplate from './renderTemplate'
   }
   if (confirmed.value) {
     renderTemplate(cleanParams)
-    console.log(chalk.green('✔') + ' Project created')
+    console.log(
+      chalk.greenBright.bold(
+        `\n\n✅ ${cleanParams.displayName} Managed Component project initialised!\n   Now run: cd ${cleanParams.namespace}\n\n`
+      )
+    )
+    console.log(
+      chalk.yellow(
+        '💡 Remember to update the README.md file with a populated Fields Description section and Tool Settings including all the information a Component Manager would need to run the component.\nSee https://managedcomponents.dev/components for inspiration.'
+      ) + '\n'
+    )
   }
 })()
 

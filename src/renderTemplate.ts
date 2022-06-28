@@ -55,18 +55,13 @@ export default async (config: Config) => {
       }
       continue
     } else {
-      // TODO - write description, icon and permissions of manifest.json
       const data = fs.readFileSync(src, 'utf8')
       const replaced = data.replace(/{{ displayName }}/g, displayName as string)
       const replaced2 = replaced.replace(
         /{{ namespace }}/g,
         namespace as string
       )
-      const replaced3 = replaced2.replace(
-        /\[ \] find & replace /g,
-        '[x] find & replace '
-      )
-      await fs.writeFileSync(dest, replaced3)
+      await fs.writeFileSync(dest, replaced2)
     }
   }
 }
