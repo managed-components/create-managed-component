@@ -1,3 +1,4 @@
+#!/usr/bin/env node
 import chalk from 'chalk'
 import minimist from 'minimist'
 import prompts from 'prompts'
