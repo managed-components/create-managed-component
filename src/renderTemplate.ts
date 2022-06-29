@@ -15,6 +15,7 @@ interface Config {
   namespace: string
   description: string
   icon: string
+  implements: string[]
   permissions: {
     [Key in Permission]: {
       description: string
@@ -24,7 +25,14 @@ interface Config {
 }
 
 export default (config: Config) => {
-  const { displayName, namespace, description, icon, permissions } = config
+  const {
+    displayName,
+    namespace,
+    description,
+    icon,
+    implements: imps,
+    permissions,
+  } = config
   const templateDir = path.resolve(__dirname, '../template')
   const files = fs.readdirSync(templateDir)
   if (!fs.existsSync(namespace as string)) {
@@ -35,6 +43,7 @@ export default (config: Config) => {
     namespace,
     description,
     icon,
+    implements: imps,
     permissions,
   }
   fs.writeFileSync(

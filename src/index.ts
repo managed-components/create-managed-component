@@ -22,6 +22,7 @@ import renderTemplate from './renderTemplate'
     namespace: string
     description: string
     icon: string
+    implements: string[]
     permissions: string[]
   }
 
@@ -33,6 +34,39 @@ import renderTemplate from './renderTemplate'
 
   const argv = minimist(process.argv.slice(2), {})
   let targetDir = argv._[0]
+
+  const implementsChoices = [
+    {
+      title: 'E-commerce events',
+      value: 'ecommerce_events',
+      description: 'required to enable handling of e-commerce data',
+    },
+    {
+      title: 'Manager events',
+      value: 'manager_events',
+      description: 'required for pageview and/or clientcreated event handling',
+    },
+    {
+      title: 'Client Events',
+      value: 'client_events',
+      description: 'e.g. mousedown, resize, scroll etc.',
+    },
+    {
+      title: 'User events',
+      value: 'user_events',
+      description: 'required to enable handling of user-defined events',
+    },
+    {
+      title: 'Widgets',
+      value: 'widget',
+      description: 'required to enable rendering widgets',
+    },
+    {
+      title: 'Embeds',
+      value: 'embed',
+      description: 'required to enable rendering embeds',
+    },
+  ]
 
   const permissionChoices = [
     {
@@ -70,6 +104,31 @@ import renderTemplate from './renderTemplate'
       title: 'Provide Widget',
       value: 'provide_widget',
       description: 'required for:	provideWidget',
+    },
+    {
+      title: 'Provide E-commerce',
+      value: 'provide_ecommerce',
+      description: 'required for:	ecommerce',
+    },
+    {
+      title: 'Provide Client Events',
+      value: 'provide_client_events',
+      description: 'required for:	event',
+    },
+    {
+      title: 'Provide Manager Events',
+      value: 'provide_user_events',
+      description: 'required for:	event',
+    },
+    {
+      title: 'Provide User Events',
+      value: 'provide_user_events',
+      description: 'required for:	event',
+    },
+    {
+      title: 'Provide Pageviews',
+      value: 'provide_pageviews',
+      description: 'required for:	pageview',
     },
   ]
 
@@ -147,6 +206,14 @@ import renderTemplate from './renderTemplate'
           type: 'text',
           message: 'Path to svg icon:',
           initial: 'assets/icon.svg',
+        },
+        {
+          name: 'implements',
+          type: 'multiselect',
+          message: 'Required Implementations:',
+          instructions: false,
+          choices: implementsChoices,
+          min: 1,
         },
         {
           name: 'permissions',
