@@ -50,6 +50,7 @@ export default (config: Config) => {
     `${namespace}/manifest.json`,
     JSON.stringify(manifest, null, 2)
   )
+  fs.writeFileSync(`${namespace}/.npmignore`, 'src')
   for (const file of files) {
     const src = `${templateDir}/${file}`
     const dest = `${namespace}/${file}`
