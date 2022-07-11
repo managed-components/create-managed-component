@@ -259,7 +259,7 @@ import renderTemplate from './renderTemplate'
     renderTemplate(cleanParams)
     console.log(
       chalk.greenBright.bold(
-        `\n\n✅ ${cleanParams.displayName} Managed Component project initialised!\n   Now run: cd ${cleanParams.namespace}\n\n`
+        `\n\n✅ ${cleanParams.displayName} Managed Component project initialised!\n   Now run: cd ${cleanParams.namespace} and start development in your src/index.ts file\n\n`
       )
     )
     console.log(
