@@ -117,7 +117,7 @@ import renderTemplate from './renderTemplate'
     },
     {
       title: 'Provide Manager Events',
-      value: 'provide_user_events',
+      value: 'provide_manager_events',
       description: 'required for:	event',
     },
     {
