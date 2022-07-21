@@ -207,14 +207,15 @@ import renderTemplate from './renderTemplate'
           message: 'Path to svg icon:',
           initial: 'assets/icon.svg',
         },
-        {
-          name: 'implements',
-          type: 'multiselect',
-          message: 'Required Implementations:',
-          instructions: false,
-          choices: implementsChoices,
-          min: 1,
-        },
+        // TBC - will re-enable when respected by webCM
+        // {
+        //   name: 'implements',
+        //   type: 'multiselect',
+        //   message: 'Required Implementations:',
+        //   instructions: false,
+        //   choices: implementsChoices,
+        //   min: 1,
+        // },
         {
           name: 'permissions',
           type: 'multiselect',
