@@ -189,7 +189,7 @@ import renderTemplate from './renderTemplate'
         },
         {
           name: 'namespace',
-          type: () => (isValidPackageName(targetDir) ? null : 'text'),
+          type: 'text',
           message: 'Namespace:',
           initial: () => toValidPackageName(targetDir),
           validate: (dir) =>
