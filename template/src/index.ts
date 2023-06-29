@@ -1,7 +1,8 @@
 import { ComponentSettings, Manager } from '@managed-components/types'
 
-export default async function (manager: Manager, settings: ComponentSettings) {
+export default async function (manager: Manager, _settings: ComponentSettings) {
   manager.addEventListener('pageview', event => {
-    // do the things
+    console.log('Hello server!')
+    event.client.execute("console.log('Hello browser')")
   })
 }
