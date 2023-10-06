@@ -105,31 +105,6 @@ import renderTemplate from './renderTemplate'
       value: 'provide_widget',
       description: 'required for:	provideWidget',
     },
-    {
-      title: 'Provide E-commerce',
-      value: 'provide_ecommerce',
-      description: 'required for:	ecommerce',
-    },
-    {
-      title: 'Provide Client Events',
-      value: 'provide_client_events',
-      description: 'required for:	event',
-    },
-    {
-      title: 'Provide Manager Events',
-      value: 'provide_manager_events',
-      description: 'required for:	event',
-    },
-    {
-      title: 'Provide User Events',
-      value: 'provide_user_events',
-      description: 'required for:	event',
-    },
-    {
-      title: 'Provide Pageviews',
-      value: 'provide_pageviews',
-      description: 'required for:	pageview',
-    },
   ]
 
   const getPermissionPrompts = (selected: string[]) => {
