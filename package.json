@@ -34,6 +34,7 @@
   },
   "dependencies": {
     "chalk": "^4.1.2",
+    "locreq": "^2.1.0",
     "minimist": "^1.2.6",
     "prompts": "^2.4.2"
   }

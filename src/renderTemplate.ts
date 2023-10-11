@@ -1,5 +1,7 @@
 import path from 'path'
 import fs from 'fs'
+import _locreq from 'locreq'
+const locreq = _locreq(__dirname)
 
 type Permission =
   | 'access_client_kv'
@@ -24,7 +26,7 @@ interface Config {
   }
 }
 
-export default (config: Config) => {
+export default function initTemplate(config: Config) {
   const {
     displayName,
     namespace,
@@ -33,10 +35,8 @@ export default (config: Config) => {
     implements: imps,
     permissions,
   } = config
-  const templateDir = path.resolve(__dirname, '../template')
-  const files = fs.readdirSync(templateDir)
-  if (!fs.existsSync(namespace as string)) {
-    fs.mkdirSync(namespace as string)
+  if (!fs.existsSync(namespace)) {
+    fs.mkdirSync(namespace)
   }
   const manifest = {
     name: displayName,
@@ -51,20 +51,23 @@ export default (config: Config) => {
     JSON.stringify(manifest, null, 2)
   )
   fs.writeFileSync(`${namespace}/.npmignore`, 'src')
+  processDir(config)
+}
+
+function processDir(config: Config, subdir = '.') {
+  const { displayName, namespace, description, implements: imps } = config
+  const templateDir = path.resolve(locreq.resolve('template'), subdir)
+  const targetDir = path.resolve(namespace, subdir)
+  if (!fs.existsSync(targetDir)) {
+    fs.mkdirSync(targetDir)
+  }
+
+  const files = fs.readdirSync(templateDir)
   for (const file of files) {
-    const src = `${templateDir}/${file}`
-    const dest = `${namespace}/${file}`
+    const src = path.resolve(templateDir, file)
+    const dest = path.resolve(targetDir, file)
     if (fs.lstatSync(src).isDirectory()) {
-      if (file === 'src') {
-        fs.mkdirSync(dest)
-        const srcFiles = fs.readdirSync(src)
-        for (const file of srcFiles) {
-          const srcFile = `${src}/${file}`
-          const destFile = `${dest}/${file}`
-          fs.copyFileSync(srcFile, destFile)
-        }
-      }
-      continue
+      processDir(config, subdir + '/' + path.basename(src))
     } else {
       const data = fs.readFileSync(src, 'utf8')
       const replaced = data.replace(/{{ displayName }}/g, displayName as string)
