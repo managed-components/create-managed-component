@@ -60,7 +60,7 @@ function processDir(config: Config, subdir = '.') {
   const templateDir = path.resolve(locreq.resolve('template'), subdir)
   const targetDir = path.resolve(namespace, subdir)
   if (!fs.existsSync(targetDir)) {
-    fs.mkdirSync(targetDir)
+    fs.mkdirSync(targetDir, { recursive: true })
   }
 
   const files = fs.readdirSync(templateDir)
