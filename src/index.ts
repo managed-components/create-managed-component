@@ -91,6 +91,11 @@ import renderTemplate from './renderTemplate'
       description: 'required for:	client.fetch',
     },
     {
+      title: 'Server Network Requests',
+      value: 'server_network_requests',
+      description: 'required for:	manager.fetch',
+    },
+    {
       title: 'Serve Static Files',
       value: 'serve_static_files',
       description: 'required for:	serve',

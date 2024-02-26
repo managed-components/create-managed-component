@@ -11,6 +11,7 @@ type Permission =
   | 'serve_static_files'
   | 'provide_server_functionality'
   | 'provide_widget'
+  | 'server_network_requests'
 
 interface Config {
   displayName: string
